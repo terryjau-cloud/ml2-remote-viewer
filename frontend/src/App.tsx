@@ -15,6 +15,7 @@ type ConnectionStatus =
 type AppMode = "viewer" | "sender";
 
 const signalingUrl = import.meta.env.VITE_SIGNALING_URL ?? "ws://localhost:8080";
+const currentPageUrl = window.location.origin;
 
 function createTimestamp() {
   return new Date().toLocaleTimeString();
@@ -338,6 +339,7 @@ function ViewerPage() {
         </div>
 
         <StatusRow status={status} />
+        <ConnectionDetails />
 
         <div className="video-frame">
           <video ref={videoRef} autoPlay playsInline controls muted={false} />
@@ -669,6 +671,7 @@ function SenderPage() {
         </div>
 
         <StatusRow status={status} />
+        <ConnectionDetails />
 
         <div className="video-frame">
           <video ref={previewVideoRef} autoPlay playsInline muted />
@@ -687,6 +690,21 @@ function StatusRow({ status }: { status: ConnectionStatus }) {
       <span className={`status-dot status-${status}`} />
       <span>Connection status: {status}</span>
     </div>
+  );
+}
+
+function ConnectionDetails() {
+  return (
+    <dl className="connection-details">
+      <div>
+        <dt>Signaling URL</dt>
+        <dd>{signalingUrl}</dd>
+      </div>
+      <div>
+        <dt>Page URL</dt>
+        <dd>{currentPageUrl}</dd>
+      </div>
+    </dl>
   );
 }
 

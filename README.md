@@ -20,11 +20,11 @@ Out of scope for this phase:
 ## Project Structure
 
 ```text
-frontend/
-signaling-server/
-docs/
-README.md
-AGENTS.md
+ml2-remote-viewer/
+├─ frontend/
+├─ signaling-server/
+├─ docs/
+└─ README.md
 ```
 
 ## Install
@@ -46,10 +46,11 @@ cd frontend
 npm run dev
 ```
 
-By default Vite serves the viewer at:
+By default Vite serves the viewer on all local network interfaces:
 
 ```text
 http://localhost:5173
+http://<YOUR_LAN_IP>:5173
 ```
 
 Copy `frontend/.env.example` to `frontend/.env` if you need to change the signaling URL.
@@ -64,7 +65,7 @@ npm run dev
 By default the signaling server listens on:
 
 ```text
-ws://localhost:8080
+ws://0.0.0.0:8080
 ```
 
 Copy `signaling-server/.env.example` to `signaling-server/.env` if you need to change the port or host.
@@ -130,6 +131,86 @@ Use this flow before the Magic Leap 2 Unity sender exists.
 9. Confirm that the viewer tab shows the sender webcam stream.
 10. Check both ICE / signaling log areas for offer, answer, and ICE candidate activity.
 
+## LAN Testing Flow
+
+Use this flow when another computer on the same local network needs to open the viewer or test sender.
+
+1. Find the LAN IP address of the machine running this repository.
+
+   Windows PowerShell:
+
+   ```powershell
+   Get-NetIPAddress -AddressFamily IPv4 |
+     Where-Object { $_.IPAddress -notlike "127.*" -and $_.PrefixOrigin -ne "WellKnown" } |
+     Select-Object IPAddress, InterfaceAlias
+   ```
+
+   Windows `ipconfig`:
+
+   ```cmd
+   ipconfig
+   ```
+
+   Look for the active Wi-Fi or Ethernet adapter IPv4 address, for example `192.168.1.20`.
+
+2. Configure the frontend signaling URL.
+
+   Create `frontend/.env`:
+
+   ```env
+   VITE_SIGNALING_URL=ws://<YOUR_LAN_IP>:8080
+   ```
+
+   Example:
+
+   ```env
+   VITE_SIGNALING_URL=ws://192.168.1.20:8080
+   ```
+
+3. Start the signaling server so it listens on all interfaces:
+
+   ```bash
+   cd signaling-server
+   npm run dev
+   ```
+
+   The server uses `HOST=0.0.0.0` and `PORT=8080` by default. You can override them in `signaling-server/.env`.
+
+4. Start the frontend Vite dev server with LAN access:
+
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+   Equivalent explicit command:
+
+   ```bash
+   npm run dev -- --host 0.0.0.0
+   ```
+
+5. On another computer in the same LAN, open:
+
+   ```text
+   http://<YOUR_LAN_IP>:5173/
+   ```
+
+6. For the browser sender test page, open:
+
+   ```text
+   http://<YOUR_LAN_IP>:5173/#sender
+   ```
+
+7. Confirm the UI shows:
+
+   ```text
+   Signaling URL: ws://<YOUR_LAN_IP>:8080
+   ```
+
+8. Use the same Room ID on the viewer and sender pages.
+
+If another computer cannot connect, check the host machine firewall and allow inbound TCP connections for ports `5173` and `8080`.
+
 ## Scripts
 
 Frontend:
@@ -137,6 +218,7 @@ Frontend:
 ```bash
 cd frontend
 npm run dev
+npm run dev:lan
 npm run build
 npm run lint
 ```

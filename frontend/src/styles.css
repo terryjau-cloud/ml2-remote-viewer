@@ -113,7 +113,7 @@ input {
   align-items: center;
   gap: 10px;
   min-height: 28px;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   color: #33454d;
 }
 
@@ -141,6 +141,31 @@ input {
 
 .status-error {
   background: #c0392b;
+}
+
+.connection-details {
+  display: grid;
+  gap: 6px;
+  margin: 0 0 16px;
+  color: #33454d;
+}
+
+.connection-details div {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 10px;
+  align-items: baseline;
+}
+
+.connection-details dt {
+  font-weight: 700;
+}
+
+.connection-details dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 0.86rem;
 }
 
 .video-frame {
