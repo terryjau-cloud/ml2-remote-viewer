@@ -17,6 +17,7 @@ export class RoomManager {
     this.leave(client);
 
     const room = this.rooms.get(roomId) ?? new Set<Client>();
+    const existingClients = [...room];
     room.add(client);
     this.rooms.set(roomId, room);
 
@@ -24,6 +25,16 @@ export class RoomManager {
     client.role = role;
 
     this.send(client, { type: "joined", roomId, clientId: client.id });
+
+    for (const existingClient of existingClients) {
+      this.send(client, {
+        type: "peer-joined",
+        roomId,
+        clientId: existingClient.id,
+        role: existingClient.role,
+      });
+    }
+
     this.broadcast(client, {
       type: "peer-joined",
       roomId,

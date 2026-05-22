@@ -93,6 +93,43 @@ Copy `signaling-server/.env.example` to `signaling-server/.env` if you need to c
 8. Use **Disconnect** to close the viewer connection.
 9. Use **Reconnect** to leave and rejoin the same room.
 
+## Browser-to-Browser Local Test Flow
+
+Use this flow before the Magic Leap 2 Unity sender exists.
+
+1. Start the signaling server:
+
+   ```bash
+   cd signaling-server
+   npm run dev
+   ```
+
+2. Start the frontend:
+
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+3. Open the viewer page in one browser tab:
+
+   ```text
+   http://localhost:5173/
+   ```
+
+4. Enter a room ID, for example `dev-room`, then click **Join**.
+5. Open the test sender page in another browser tab:
+
+   ```text
+   http://localhost:5173/#sender
+   ```
+
+6. Enter the same room ID, then click **Join**.
+7. Allow webcam permission when the browser asks.
+8. Confirm that the sender tab shows the local webcam preview.
+9. Confirm that the viewer tab shows the sender webcam stream.
+10. Check both ICE / signaling log areas for offer, answer, and ICE candidate activity.
+
 ## Scripts
 
 Frontend:
